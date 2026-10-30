@@ -1,0 +1,28 @@
+import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import churches from "./modules/iglesias/routes.js";
+import identity from "./modules/identidad/routes.js";
+import geography from "./modules/geografia/routes.js";
+import heritage from "./modules/patrimonio/routes.js";
+import offerings from "./modules/oferta/routes.js";
+import masses from "./modules/misas/routes.js";
+import tithes from "./modules/diezmos/routes.js";
+import spaces from "./modules/espacios/routes.js";
+import { errorHandler, notFound } from "./lib/errors.js";
+
+export const app = express();
+app.disable("x-powered-by");
+app.use(express.json({ limit: "1mb" }));
+app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "../public")));
+app.get("/health", (_req, res) => res.json({ status: "ok" }));
+app.use("/api/v1", identity);
+app.use("/api/v1/geo", geography);
+app.use("/api/v1", heritage);
+app.use("/api/v1", offerings);
+app.use("/api/v1", masses);
+app.use("/api/v1", tithes);
+app.use("/api/v1", spaces);
+app.use("/api/v1/churches", churches);
+app.use((_req, _res, next) => next(notFound()));
+app.use(errorHandler);
