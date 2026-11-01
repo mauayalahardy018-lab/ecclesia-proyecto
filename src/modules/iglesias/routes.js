@@ -51,6 +51,16 @@ router.get(
   "/:id",
   route(async (req, res) => res.json(await service.detail(Number(req.params.id))))
 );
+router.get(
+  "/:id/manage",
+  authenticate,
+  requireRole("coordinacion", "administrador_iglesia"),
+  route(async (req, res) => {
+    const id = Number(req.params.id);
+    await requireChurch(req, id);
+    res.json(await service.manageDetail(id));
+  })
+);
 router.post(
   "/",
   authenticate,

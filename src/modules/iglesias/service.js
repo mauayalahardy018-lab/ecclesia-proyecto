@@ -9,6 +9,12 @@ export async function detail(id) {
   return church;
 }
 
+export async function manageDetail(id) {
+  const church = await repository.findChurch(id, true);
+  if (!church) throw notFound();
+  return church;
+}
+
 export async function ensureActive(id) {
   await detail(id);
 }

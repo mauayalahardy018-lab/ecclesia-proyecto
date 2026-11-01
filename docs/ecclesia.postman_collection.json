@@ -1,0 +1,2015 @@
+{
+  "info": {
+    "name": "Ecclesia API",
+    "description": "Colección generada desde public/openapi.yaml. Inicia sesión, copia el JWT a token y completa los ejemplos según el flujo. Usa datos ficticios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Geografía",
+      "item": [
+        {
+          "name": "GET /geo/states",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/geo/states",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "geo",
+                "states"
+              ],
+              "query": []
+            },
+            "description": "Lista las 32 entidades"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /geo/municipalities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/geo/municipalities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "geo",
+                "municipalities"
+              ],
+              "query": [
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Municipios de una entidad"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /geo/localities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/geo/localities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "geo",
+                "localities"
+              ],
+              "query": [
+                {
+                  "key": "municipality",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Localidades cargadas de un municipio"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Iglesias",
+      "item": [
+        {
+          "name": "GET /churches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "municipality",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "locality",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "minCapacity",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "maxCapacity",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Busca iglesias activas"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches"
+              ],
+              "query": []
+            },
+            "description": "Crea una iglesia",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"type\": \"catedral\",\n  \"stateCode\": \"valor\",\n  \"municipalityCode\": \"valor\",\n  \"localityCode\": \"valor\",\n  \"address\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Ficha pública de iglesia activa"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /churches/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Actualiza iglesia asignada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"type\": \"catedral\",\n  \"stateCode\": \"valor\",\n  \"municipalityCode\": \"valor\",\n  \"localityCode\": \"valor\",\n  \"address\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /churches/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Cierra una iglesia lógicamente",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /churches/{id}/reopen",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{id}}/reopen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{id}}",
+                "reopen"
+              ],
+              "query": []
+            },
+            "description": "Reactiva una iglesia cerrada",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{id}/manage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{id}}/manage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{id}}",
+                "manage"
+              ],
+              "query": []
+            },
+            "description": "Consulta completa de iglesia asignada, incluso si está cerrada",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Patrimonio",
+      "item": [
+        {
+          "name": "GET /rankings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rankings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rankings"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "municipality",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "locality",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "objectType",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "minAge",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Ranking de iglesias activas con objetos"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /heritage-criteria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/heritage-criteria",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "heritage-criteria"
+              ],
+              "query": []
+            },
+            "description": "Criterio activo del índice"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /heritage-criteria",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/heritage-criteria",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "heritage-criteria"
+              ],
+              "query": []
+            },
+            "description": "Publica nueva versión de criterios",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/heritage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/heritage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "heritage"
+              ],
+              "query": []
+            },
+            "description": "Inventario e índice público"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/heritage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/heritage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "heritage"
+              ],
+              "query": []
+            },
+            "description": "Registra un objeto",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"type\": \"valor\",\n  \"material\": \"valor\",\n  \"conservation\": \"valor\",\n  \"location\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /churches/{churchId}/heritage/{id}/status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/heritage/{{id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "heritage",
+                "{{id}}",
+                "status"
+              ],
+              "query": []
+            },
+            "description": "Cambia el estado de un objeto",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /churches/{churchId}/heritage/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/heritage/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "heritage",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Edita un objeto conservando su identidad e historial de estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"type\": \"valor\",\n  \"material\": \"valor\",\n  \"conservation\": \"valor\",\n  \"location\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Oferta",
+      "item": [
+        {
+          "name": "GET /churches/{churchId}/services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/services",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "services"
+              ],
+              "query": []
+            },
+            "description": "Servicios públicos"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/services",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/services",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "services"
+              ],
+              "query": []
+            },
+            "description": "Registra un servicio",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"requirements\": \"valor\",\n  \"durationMinutes\": 1,\n  \"appointmentRequired\": false,\n  \"priceKind\": \"fijo\",\n  \"scheduleText\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/talks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/talks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "talks"
+              ],
+              "query": []
+            },
+            "description": "Pláticas públicas"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/talks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/talks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "talks"
+              ],
+              "query": []
+            },
+            "description": "Registra una plática",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"valor\",\n  \"weekdays\": [\n    1\n  ],\n  \"localTime\": \"18:30\",\n  \"sessions\": 1,\n  \"capacity\": 1,\n  \"place\": \"valor\",\n  \"instructor\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /talks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/talks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talks"
+              ],
+              "query": [
+                {
+                  "key": "municipality",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Busca pláticas activas en un municipio"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/services/manage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/services/manage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "services",
+                "manage"
+              ],
+              "query": []
+            },
+            "description": "Todos los servicios de una iglesia asignada",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/talks/manage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/talks/manage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "talks",
+                "manage"
+              ],
+              "query": []
+            },
+            "description": "Todas las pláticas de una iglesia asignada",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /churches/{churchId}/services/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/services/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "services",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Edita servicio",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"requirements\": \"valor\",\n  \"durationMinutes\": 1,\n  \"appointmentRequired\": false,\n  \"priceKind\": \"fijo\",\n  \"scheduleText\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /churches/{churchId}/services/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/services/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "services",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "Activa o desactiva servicio sin borrar historial",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /churches/{churchId}/talks/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/talks/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "talks",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Edita plática",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"valor\",\n  \"weekdays\": [\n    1\n  ],\n  \"localTime\": \"18:30\",\n  \"sessions\": 1,\n  \"capacity\": 1,\n  \"place\": \"valor\",\n  \"instructor\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /churches/{churchId}/talks/{id}/active",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/talks/{{id}}/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "talks",
+                "{{id}}",
+                "active"
+              ],
+              "query": []
+            },
+            "description": "Activa o desactiva plática sin borrar historial",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Misas",
+      "item": [
+        {
+          "name": "GET /churches/{churchId}/priests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/priests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "priests"
+              ],
+              "query": []
+            },
+            "description": "Sacerdotes de la iglesia"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/priests",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/priests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "priests"
+              ],
+              "query": []
+            },
+            "description": "Registra un sacerdote",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/priests/{priestId}",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/priests/{{priestId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "priests",
+                "{{priestId}}"
+              ],
+              "query": []
+            },
+            "description": "Asigna sacerdote a otra iglesia",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /priests/{id}/agenda",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/priests/{{id}}/agenda",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "priests",
+                "{{id}}",
+                "agenda"
+              ],
+              "query": []
+            },
+            "description": "Agenda semanal del sacerdote"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/masses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/masses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "masses"
+              ],
+              "query": []
+            },
+            "description": "Horarios de misa"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/masses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/masses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "masses"
+              ],
+              "query": []
+            },
+            "description": "Registra horario recurrente",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priestId\": 1,\n  \"weekday\": 1,\n  \"localTime\": \"valor\",\n  \"kind\": \"diaria\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/celebrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/celebrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "celebrations"
+              ],
+              "query": []
+            },
+            "description": "Celebraciones privadas",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/celebrations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/celebrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "celebrations"
+              ],
+              "query": []
+            },
+            "description": "Confirma una misa celebrada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scheduleId\": 1,\n  \"localDate\": \"2026-10-30\",\n  \"actualPriestId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/masses/week",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/masses/week",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "masses",
+                "week"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Genera la agenda semanal desde horarios recurrentes"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Diezmos",
+      "item": [
+        {
+          "name": "POST /churches/{churchId}/celebrations/{celebrationId}/tithe",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/celebrations/{{celebrationId}}/tithe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "celebrations",
+                "{{celebrationId}}",
+                "tithe"
+              ],
+              "query": []
+            },
+            "description": "Registra diezmo único por celebración",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /churches/{churchId}/tithes/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/tithes/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "tithes",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Corrige monto con historial",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/tithes/report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/tithes/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "tithes",
+                "report"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "groupBy",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Resumen privado por periodo y agrupación",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/tithes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/tithes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "tithes"
+              ],
+              "query": []
+            },
+            "description": "Lista privada de diezmos para corrección",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tithes/comparison",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tithes/comparison",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tithes",
+                "comparison"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "municipality",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Comparación nacional restringida a Coordinación",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Espacios",
+      "item": [
+        {
+          "name": "GET /churches/{churchId}/space-types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-types"
+              ],
+              "query": []
+            },
+            "description": "Tipos de espacio sin precios"
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/space-requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-requests"
+              ],
+              "query": []
+            },
+            "description": "Solicitudes privadas",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/space-requests",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-requests"
+              ],
+              "query": []
+            },
+            "description": "Solicitud pública sin cuenta",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spaceTypeId\": 1,\n  \"name\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /space-requests/{folio}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-key",
+                "value": "{{xaccesskey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/space-requests/{{folio}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "space-requests",
+                "{{folio}}"
+              ],
+              "query": []
+            },
+            "description": "Seguimiento privado con folio y clave"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /space-requests/{folio}/{action}",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-access-key",
+                "value": "{{xaccesskey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/space-requests/{{folio}}/{{action}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "space-requests",
+                "{{folio}}",
+                "{{action}}"
+              ],
+              "query": []
+            },
+            "description": "Acepta, rechaza o cancela"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/space-requests/{id}/{action}",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-requests/{{id}}/{{action}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-requests",
+                "{{id}}",
+                "{{action}}"
+              ],
+              "query": []
+            },
+            "description": "Revisión o cotización por administrador",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /churches/{churchId}/space-units",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-units",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-units"
+              ],
+              "query": []
+            },
+            "description": "Inventario privado de espacios",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/space-units",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-units",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-units"
+              ],
+              "query": []
+            },
+            "description": "Registra unidad física de espacio",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /churches/{churchId}/space-requests/{id}/assign",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/churches/{{churchId}}/space-requests/{{id}}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "churches",
+                "{{churchId}}",
+                "space-requests",
+                "{{id}}",
+                "assign"
+              ],
+              "query": []
+            },
+            "description": "Asigna unidad disponible a solicitud aceptada",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Identidad",
+      "item": [
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ],
+              "query": []
+            },
+            "description": "Inicia sesión",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"persona@example.test\",\n  \"password\": \"valor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "me"
+              ],
+              "query": []
+            },
+            "description": "Usuario actual",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /me/churches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/me/churches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "me",
+                "churches"
+              ],
+              "query": []
+            },
+            "description": "Iglesias asignadas al usuario",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": []
+            },
+            "description": "Lista usuarios sin hashes de contraseña",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": []
+            },
+            "description": "Registra usuario y asignaciones",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"valor\",\n  \"email\": \"persona@example.test\",\n  \"password\": \"valor\",\n  \"role\": \"coordinacion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /users/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{id}}"
+              ],
+              "query": []
+            },
+            "description": "Cambia rol, estado y asignaciones de usuario",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /users/{id}/password",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{id}}/password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{id}}",
+                "password"
+              ],
+              "query": []
+            },
+            "description": "Coordinación restablece contraseña de usuario",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4300/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "churchId",
+      "value": "1"
+    },
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "folio",
+      "value": ""
+    },
+    {
+      "key": "xaccesskey",
+      "value": ""
+    }
+  ]
+}

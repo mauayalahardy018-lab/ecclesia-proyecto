@@ -42,6 +42,15 @@ export const changes = async (churchId, id) =>
       [churchId, id]
     )
   ).rows;
+export const listTithes = async (churchId) =>
+  (
+    await query(
+      `SELECT t.id,t.celebration_id,t.amount_cents,t.captured_at,ce.local_date,ce.starts_at,p.name AS priest_name
+    FROM tithes t JOIN celebrations ce ON ce.id=t.celebration_id JOIN priests p ON p.id=ce.actual_priest_id
+    WHERE t.church_id=$1 ORDER BY ce.starts_at DESC LIMIT 200`,
+      [churchId]
+    )
+  ).rows;
 export const reportRows = async (churchId, from, to) =>
   (
     await query(
@@ -53,3 +62,25 @@ export const reportRows = async (churchId, from, to) =>
       [churchId, from, to]
     )
   ).rows;
+
+export async function comparisonRows(filters) {
+  const values = [filters.from, filters.to];
+  const where = ["ce.local_date BETWEEN $1 AND $2"];
+  if (filters.state) {
+    values.push(filters.state);
+    where.push(`c.state_code=$${values.length}`);
+  }
+  if (filters.municipality) {
+    values.push(filters.municipality);
+    where.push(`c.municipality_code=$${values.length}`);
+  }
+  return (
+    await query(
+      `SELECT c.id AS church_id,c.name AS church_name,c.state_code,c.municipality_code,
+    count(t.id)::int AS count,sum(t.amount_cents)::text AS total_cents
+    FROM tithes t JOIN celebrations ce ON ce.id=t.celebration_id JOIN churches c ON c.id=t.church_id
+    WHERE ${where.join(" AND ")} GROUP BY c.id ORDER BY sum(t.amount_cents) DESC,c.name`,
+      values
+    )
+  ).rows;
+}

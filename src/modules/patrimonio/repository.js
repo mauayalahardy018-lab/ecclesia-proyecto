@@ -37,6 +37,26 @@ export async function addObject(churchId, input) {
   return result.rows[0];
 }
 
+export async function updateObject(churchId, id, input) {
+  const result = await query(
+    `UPDATE heritage_objects SET name=$3,type=$4,year_built=$5,century=$6,material=$7,conservation=$8,location_in_church=$9,inah_catalogued=$10,updated_at=now()
+     WHERE church_id=$1 AND id=$2 RETURNING *`,
+    [
+      churchId,
+      id,
+      input.name,
+      input.type,
+      input.year ?? null,
+      input.century ?? null,
+      input.material,
+      input.conservation,
+      input.location,
+      input.inahCatalogued
+    ]
+  );
+  return result.rows[0] || null;
+}
+
 export async function changeStatus(churchId, id, status) {
   const result = await query(
     "UPDATE heritage_objects SET status=$3,updated_at=now() WHERE church_id=$1 AND id=$2 RETURNING *",

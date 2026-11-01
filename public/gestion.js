@@ -1,7 +1,10 @@
+import { createExtra } from "./gestion-extra.js";
+
 const $ = (id) => document.getElementById(id);
 let token = null;
 let role = null;
 let churches = [];
+let extra = null;
 
 function node(tag, value, className) {
   const element = document.createElement(tag);
@@ -40,7 +43,8 @@ async function refreshChurch() {
   const selected = churches.find((church) => Number(church.id) === churchId());
   $("church-current").textContent = selected ? `${selected.name} · ${selected.status}` : "No hay iglesias asignadas.";
   $("church-toggle").textContent = selected?.status === "cerrada" ? "Reactivar iglesia" : "Cerrar iglesia";
-  if (!selected || selected.status === "cerrada") return;
+  if (!selected) return;
+  if (selected.status === "cerrada") { await extra?.refresh(); return; }
   if (role === "tesorero") {
     const celebrations = await api(`/churches/${churchId()}/celebrations`);
     $("celebration-select").replaceChildren(option("", "Selecciona una misa"), ...celebrations.map((item) => option(item.id, `${item.local_date.slice(0, 10)} · ${new Date(item.starts_at).toLocaleTimeString("es-MX")}`)));
@@ -51,6 +55,7 @@ async function refreshChurch() {
     $("actual-priest-select").replaceChildren(option("", "Selecciona"), ...priests.map((priest) => option(priest.id, priest.name)));
     $("schedule-select").replaceChildren(option("", "Selecciona"), ...schedules.map((item) => option(item.id, `Día ${item.weekday} · ${item.local_time} · ${item.priest_name}`)));
   }
+  await extra?.refresh();
 }
 
 function bind(formId, createBody, path, after) {
@@ -76,6 +81,7 @@ $("login-form").addEventListener("submit", async (event) => {
     const result = await api("/auth/login", "POST", data);
     token = result.token;
     role = result.user.role;
+    extra = createExtra({ api, churchId, status, role, refreshChurches });
     $("user-name").textContent = `${result.user.name} · ${role.replaceAll("_", " ")}`;
     for (const element of document.querySelectorAll("[class*='role-']")) {
       element.hidden = !element.classList.contains(`role-${role}`);
@@ -89,6 +95,7 @@ $("login-form").addEventListener("submit", async (event) => {
 
 $("logout").addEventListener("click", () => {
   token = null; role = null; churches = [];
+  extra?.dispose(); extra = null;
   $("work-section").hidden = true;
   $("login-section").hidden = false;
   $("report-output").textContent = "";
@@ -150,6 +157,17 @@ $("load-requests").addEventListener("click", async () => {
             try { await api(`/churches/${churchId()}/space-requests/${item.id}/review`, "POST", {}); status("Solicitud en revisión."); $("load-requests").click(); } catch (error) { status(error.message); }
           });
           box.append(button);
+        }
+        if (item.status === "en_revision") {
+          const unavailable = node("button", "Sin disponibilidad", "action-button");
+          unavailable.addEventListener("click", async () => {
+            try {
+              await api(`/churches/${churchId()}/space-requests/${item.id}/unavailable`, "POST", { note: "Sin disponibilidad" });
+              status("Solicitud marcada sin disponibilidad.");
+              $("load-requests").click();
+            } catch (error) { status(error.message); }
+          });
+          box.append(unavailable);
         }
       }
       return box;

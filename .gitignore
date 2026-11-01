@@ -4,3 +4,5 @@ coverage/
 dist/
 *.log
 data/pglite-db/
+docs/render_defensa/
+docs/*.pdf

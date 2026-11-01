@@ -60,12 +60,28 @@ La columna de estado de cada requisito vive en `docs/trazabilidad.md`: `PENDIENT
 - API de directorio, patrimonio, servicios, pláticas, sacerdotes, misas, diezmos, espacios e identidad; interfaz pública de búsqueda, ficha, ranking y solicitudes; panel inicial para personal; contrato OpenAPI.
 - `npm run check` y pruebas de integración con datos sembrados. Los errores reales corregidos están en la bitácora; la defensa escrita es un guion, no una defensa realizada.
 
+### Trabajo realizado después de esa revisión
+
+- Corregidas las respuestas 500 del ranking y las fichas al limitar a una conexión el pool usado con PostgreSQL embebido. Una regresión consulta siete recursos en paralelo durante cinco rondas; en la prueba manual hubo 210 respuestas correctas.
+- Panel privado ampliado para editar iglesias, objetos patrimoniales, servicios y pláticas; administrar usuarios, roles, criterios, diezmos e inventario de espacios.
+- Búsqueda pública de pláticas por municipio y agenda semanal; comparación nacional de diezmos y asignación de unidades a solicitudes aceptadas.
+- Caducidad automática de cotizaciones al iniciar el servidor y cada minuto. OpenAPI con 58 operaciones y colección Postman derivada del contrato.
+- `npm run check` e integración con la base embebida verdes; se verificaron portada, ficha y panel de Coordinación en navegador.
+- Pruebas adicionales de servicios elevan la cobertura de dominio y servicios a 86.12 % de sentencias y 75.9 % de ramas; `npm run coverage:full` queda como control de CI después de preparar la base.
+- Los 40 nombres ficticios del directorio se sustituyeron por templos reales de los ocho municipios de la semilla. Cada tarjeta y ficha abre Google Maps para consultar ubicación y fotos; las fuentes están en `docs/fuentes-iglesias.md`. Los demás datos del ejercicio se identifican como simulados.
+
 ### Pendientes antes de declarar la aplicación terminada
 
 1. Responder y validar con el docente/cliente P-01–P-10; ajustar reglas y criterios afectados.
-2. Completar y probar la interfaz de gestión: edición de objetos/oferta, usuarios, criterios, correcciones de diezmo, estados de solicitudes y todas las tareas desde navegador.
-3. Verificar el bloqueo transaccional de asignaciones y celebraciones concurrentes en PostgreSQL de servidor; ampliar consultas de misas celebradas y caducidad automática de cotizaciones sin visita del solicitante.
-4. Ampliar pruebas de integración para todas las rutas y permisos, y medir cobertura de **todos** los servicios además del dominio.
-5. Repetir migración, seed y pruebas en PostgreSQL de servidor; preparar despliegue, seguridad operativa y copia de respaldo.
-6. Publicar los repositorios remotos, grabar el video real de la portabilidad ya probada localmente y realizar la defensa oral por el alumno.
-7. Solo después de los obligatorios, implementar RF-28–RF-31 deseables si el tiempo del curso lo permite.
+2. Confirmar con el cliente las reglas aún abiertas de agenda, permisos, índice, diezmos y retención. La matriz de permisos implementada ya tiene pruebas, pero no sustituye esa confirmación.
+3. Publicar tres repositorios remotos separados: producto, arnés y prueba de portabilidad. El MP4 de 1:36 ya documenta la ejecución local del hook.
+4. Realizar la defensa oral por el alumno. La preparación escrita y el video son evidencia, no constancia de una exposición realizada.
+
+### Cierre técnico del 1 de noviembre de 2026
+
+- RF-02–RF-04: capacidad filtrable con valor de demostración identificado, ficha con contacto/coordenadas disponibles y basílica real documentada; seis tipos cubiertos por prueba.
+- RF-16: concurrencia de un mismo sacerdote en dos iglesias comprobada contra PostgreSQL 17 de servidor. La segunda alta devuelve conflicto.
+- RF-21: cinco agrupaciones de diezmos incluyen promedio, mínimo y máximo, con pruebas de totales y grupos vacíos.
+- RF-27: pruebas de acceso anónimo, coordinación y personal asignado/no asignado; límites por rol e iglesia comprobados.
+- Migración y seed limpios en PostgreSQL 17; 15 pruebas de integración y 39 pruebas de cobertura completa verdes. Cobertura de dominio y servicios: 86.41 % de sentencias y 78.98 % de ramas.
+- Arnés 0.1.4 instalado en el repositorio independiente de tareas. El hook pasó lint, formato, dependencias y prueba; video local de portabilidad generado.

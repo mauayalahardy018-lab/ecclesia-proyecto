@@ -31,6 +31,18 @@ function formatType(type) {
   return ({ basilica: "Basílica", parroquia: "Parroquia" })[type] || (type ? type[0].toUpperCase() + type.slice(1) : "Iglesia");
 }
 
+function mapsLink(church, label = "Mapa y fotos ↗") {
+  const query = church.maps_query || (church.latitude != null && church.longitude != null
+    ? `${church.latitude},${church.longitude}`
+    : `${church.name}, ${church.address}, ${church.municipality_name}, ${church.state_name}, México`);
+  const link = text("a", label, "maps-link");
+  link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.setAttribute("aria-label", `${label} de ${church.name} en Google Maps`);
+  return link;
+}
+
 async function listChurches() {
   $("results-status").textContent = "Cargando iglesias…";
   const params = new URLSearchParams({ page: state.page, limit: state.limit });
@@ -43,11 +55,13 @@ async function listChurches() {
     state.total = result.total;
     const cards = result.items.map((church) => {
       const card = text("article", "", "card");
-      card.append(text("span", formatType(church.type), "tag"), text("h3", church.name), text("p", `${church.locality_name}, ${church.municipality_name}, ${church.state_name}`), text("small", church.capacity == null ? "Capacidad sin registrar" : `Capacidad: ${church.capacity} personas`));
+      card.append(text("span", formatType(church.type), "tag"), text("h3", church.name), text("p", `${church.locality_name}, ${church.municipality_name}, ${church.state_name}`), text("small", church.capacity == null ? "Capacidad sin registrar" : `Capacidad${church.capacity_is_demo ? " de demostración" : ""}: ${church.capacity} personas`));
       const button = text("button", "Ver ficha ↗");
       button.type = "button";
       button.addEventListener("click", () => showDetail(church.id));
-      card.append(button);
+      const actions = text("div", "", "card-actions");
+      actions.append(button, mapsLink(church));
+      card.append(actions);
       return card;
     });
     $("church-list").replaceChildren(...cards);
@@ -75,7 +89,7 @@ function detailPanel(title, items, render) {
 
 function requestPanel(churchId, types) {
   const panel = text("section", "", "detail-panel");
-  panel.append(text("h3", "Solicitar un espacio"), text("p", "Envía tu solicitud sin crear una cuenta. La cotización será privada."));
+  panel.append(text("h3", "Solicitar un espacio"), text("p", "Flujo de demostración: la solicitud se guarda en esta aplicación y no se envía a la iglesia real."));
   if (!types.length) { panel.append(text("p", "Esta iglesia no ofrece espacios actualmente.")); return panel; }
   const form = document.createElement("form");
   form.className = "request-form";
@@ -111,29 +125,36 @@ async function showDetail(id) {
   $("detail-content").replaceChildren(text("p", "Cargando ficha…"));
   $("detail").scrollIntoView({ behavior: "smooth" });
   try {
-    const [church, heritage, services, talks, masses, spaces] = await Promise.all([
+    const [church, heritage, services, talks, masses, spaces, week] = await Promise.all([
       api(`/churches/${id}`), api(`/churches/${id}/heritage`), api(`/churches/${id}/services`),
-      api(`/churches/${id}/talks`), api(`/churches/${id}/masses`), api(`/churches/${id}/space-types`)
+      api(`/churches/${id}/talks`), api(`/churches/${id}/masses`), api(`/churches/${id}/space-types`),
+      api(`/churches/${id}/masses/week?from=${new Date().toISOString().slice(0, 10)}`)
     ]);
     const header = text("div", "", "detail-header");
-    header.append(text("p", formatType(church.type), "eyebrow"), text("h2", church.name), text("p", `${church.address} · ${church.locality_name}, ${church.state_name}`), text("p", `Capacidad: ${church.capacity ?? "sin registrar"} · Construcción: ${church.construction_year ?? "sin registrar"}`));
-    if (church.latitude != null && church.longitude != null) {
-      const map = text("a", "Abrir ubicación en Google Maps ↗");
-      map.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${church.latitude},${church.longitude}`)}`;
-      map.target = "_blank";
-      map.rel = "noopener noreferrer";
-      header.append(map);
+    header.append(text("p", formatType(church.type), "eyebrow"), text("h2", church.name), text("p", `${church.address} · ${church.locality_name}, ${church.state_name}`));
+    header.append(text("p", `Capacidad${church.capacity_is_demo ? " de demostración" : ""}: ${church.capacity ?? "sin registrar"} · Inicio de construcción: ${church.construction_year ?? "sin registrar"}`));
+    header.append(text("p", `Teléfono: ${church.phone ?? "sin registrar"} · Correo: ${church.email ?? "sin registrar"}`));
+    if (church.latitude != null && church.longitude != null) header.append(text("p", `Coordenadas: ${church.latitude}, ${church.longitude}`));
+    header.append(mapsLink(church, "Abrir ubicación y fotos en Google Maps ↗"));
+    if (church.source_url) {
+      const source = text("a", "Fuente del templo ↗", "source-link");
+      source.href = church.source_url;
+      source.target = "_blank";
+      source.rel = "noopener noreferrer";
+      header.append(source);
     }
+    if (church.source_url) header.append(text("p", "Iglesia real; las capacidades marcadas de demostración, el patrimonio, servicios, pláticas, misas y solicitudes mostrados abajo son datos de simulación académica.", "demo-note"));
     const grid = text("div", "", "detail-grid");
     grid.append(
       detailPanel("Patrimonio", heritage.objects, (x) => `${x.name} · ${x.status}`),
       detailPanel("Servicios", services, (x) => `${x.name} · ${x.schedule_text}`),
       detailPanel("Pláticas", talks, (x) => `${x.type} · ${x.local_time}`),
       detailPanel("Misas", masses, (x) => `Día ${x.weekday} · ${x.local_time}`),
+      detailPanel("Agenda de esta semana", week.items, (x) => `${x.localDate} · ${x.local_time} · ${x.priest_name}`),
       detailPanel("Espacios disponibles", spaces, (x) => x.type),
       requestPanel(id, spaces)
     );
-    $("detail-content").replaceChildren(header, text("p", `Índice patrimonial: ${heritage.index.points} puntos · ${heritage.index.distinction ?? "Sin distinción"}`), grid);
+    $("detail-content").replaceChildren(header, text("p", `Índice patrimonial simulado: ${heritage.index.points} puntos · ${heritage.index.distinction ?? "Sin distinción"}`), grid);
   } catch (error) {
     $("detail-content").replaceChildren(text("p", error.message));
   }
@@ -165,6 +186,26 @@ $("search-form").addEventListener("submit", (event) => { event.preventDefault();
 $("prev").addEventListener("click", () => { state.page--; listChurches(); });
 $("next").addEventListener("click", () => { state.page++; listChurches(); });
 $("close-detail").addEventListener("click", () => { $("detail").hidden = true; $("explorar").scrollIntoView({ behavior: "smooth" }); });
+$("talk-search-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const municipality = $("municipality").value;
+  if (!municipality) { $("talk-status").textContent = "Primero selecciona un estado y un municipio en el directorio."; return; }
+  const params = new URLSearchParams({ municipality, limit: "30" });
+  if ($("talk-type").value.trim()) params.set("type", $("talk-type").value.trim());
+  $("talk-status").textContent = "Buscando pláticas…";
+  try {
+    const result = await api(`/talks?${params}`);
+    $("talk-status").textContent = `${result.total} pláticas encontradas`;
+    $("talk-results").replaceChildren(...result.items.map((item) => {
+      const card = text("article", "", "card");
+      card.append(text("span", "PLÁTICA", "tag"), text("h3", item.type), text("p", item.church_name), text("small", `Hora: ${item.local_time} · Cupo: ${item.capacity}`));
+      const link = text("button", "Ver iglesia ↗"); link.type = "button";
+      link.addEventListener("click", () => showDetail(item.church_id));
+      card.append(link);
+      return card;
+    }));
+  } catch (error) { $("talk-status").textContent = error.message; }
+});
 $("follow-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const folio = $("follow-folio").value.trim();

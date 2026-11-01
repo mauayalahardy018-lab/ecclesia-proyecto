@@ -42,6 +42,13 @@ router.get(
     res.json(await repository.churchSchedules(id));
   })
 );
+router.get(
+  "/churches/:churchId/masses/week",
+  route(async (req, res) => {
+    const { from } = z.object({ from: z.iso.date() }).parse(req.query);
+    res.json(await service.weeklyAgenda(Number(req.params.churchId), from));
+  })
+);
 router.post(
   "/churches/:churchId/priests",
   authenticate,

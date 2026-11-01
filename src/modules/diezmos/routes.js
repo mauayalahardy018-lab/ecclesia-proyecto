@@ -3,14 +3,49 @@ import { z } from "zod";
 import { route } from "../../lib/errors.js";
 import { authenticate, requireChurch, requireRole } from "../../infrastructure/auth/access.js";
 import * as service from "./service.js";
+import * as repository from "./repository.js";
 
 const router = Router();
 const amountInput = z.object({ amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/) });
-const reportInput = z.object({
-  from: z.iso.date(),
-  to: z.iso.date(),
-  groupBy: z.enum(["day", "week", "month", "schedule", "priest"]).default("day")
-});
+const reportInput = z
+  .object({
+    from: z.iso.date(),
+    to: z.iso.date(),
+    groupBy: z.enum(["day", "week", "month", "schedule", "priest"]).default("day")
+  })
+  .refine((value) => value.from <= value.to, { message: "El periodo no es válido" });
+const comparisonInput = z
+  .object({
+    from: z.iso.date(),
+    to: z.iso.date(),
+    state: z
+      .string()
+      .regex(/^\d{2}$/)
+      .optional(),
+    municipality: z
+      .string()
+      .regex(/^\d{5}$/)
+      .optional()
+  })
+  .refine((value) => value.from <= value.to, { message: "El periodo no es válido" });
+
+router.get(
+  "/tithes/comparison",
+  authenticate,
+  requireRole("coordinacion"),
+  route(async (req, res) => res.json(await service.comparison(comparisonInput.parse(req.query))))
+);
+
+router.get(
+  "/churches/:churchId/tithes",
+  authenticate,
+  requireRole("tesorero", "coordinacion"),
+  route(async (req, res) => {
+    const churchId = Number(req.params.churchId);
+    await requireChurch(req, churchId);
+    res.json(await repository.listTithes(churchId));
+  })
+);
 
 router.post(
   "/churches/:churchId/celebrations/:celebrationId/tithe",

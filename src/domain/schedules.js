@@ -73,3 +73,27 @@ export function priestHasConflictAcrossZones(candidate, schedules, referenceDate
     return false;
   });
 }
+
+export function generateWeek(schedules, fromDate, timezone) {
+  const from = DateTime.fromISO(fromDate, { zone: timezone });
+  if (!from.isValid) throw new Error("Fecha o zona inválida");
+  const sunday = from.minus({ days: from.weekday % 7 }).startOf("day");
+  return schedules
+    .map((schedule) => {
+      const day = sunday.plus({ days: Number(schedule.weekday) });
+      const [hour, minute] = String(schedule.local_time).slice(0, 5).split(":").map(Number);
+      const start = DateTime.fromObject(
+        { year: day.year, month: day.month, day: day.day, hour, minute },
+        { zone: timezone }
+      );
+      if (!start.isValid || start.hour !== hour || start.minute !== minute) return null;
+      return {
+        ...schedule,
+        localDate: day.toISODate(),
+        startsAt: start.toISO(),
+        endsAt: start.plus({ minutes: Number(schedule.duration_minutes) }).toISO()
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+}

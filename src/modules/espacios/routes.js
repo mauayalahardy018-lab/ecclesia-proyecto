@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { route } from "../../lib/errors.js";
+import { route, notFound, conflict } from "../../lib/errors.js";
 import { authenticate, requireChurch, requireRole } from "../../infrastructure/auth/access.js";
 import * as repository from "./repository.js";
 import * as service from "./service.js";
@@ -24,6 +24,44 @@ const staffInput = z.object({
 router.get(
   "/churches/:churchId/space-types",
   route(async (req, res) => res.json(await repository.publicTypes(Number(req.params.churchId))))
+);
+router.get(
+  "/churches/:churchId/space-units",
+  authenticate,
+  requireRole("coordinacion", "administrador_iglesia"),
+  route(async (req, res) => {
+    const id = Number(req.params.churchId);
+    await requireChurch(req, id);
+    res.json(await repository.unitsForChurch(id));
+  })
+);
+router.post(
+  "/churches/:churchId/space-units",
+  authenticate,
+  requireRole("coordinacion", "administrador_iglesia"),
+  route(async (req, res) => {
+    const id = Number(req.params.churchId);
+    await requireChurch(req, id);
+    const { spaceTypeId, code } = z
+      .object({ spaceTypeId: z.number().int().positive(), code: z.string().trim().min(1).max(60) })
+      .parse(req.body);
+    const unit = await repository.createUnit(id, spaceTypeId, code);
+    if (!unit) throw notFound();
+    res.status(201).json(unit);
+  })
+);
+router.post(
+  "/churches/:churchId/space-requests/:id/assign",
+  authenticate,
+  requireRole("coordinacion", "administrador_iglesia"),
+  route(async (req, res) => {
+    const churchId = Number(req.params.churchId);
+    await requireChurch(req, churchId);
+    const { unitId } = z.object({ unitId: z.number().int().positive() }).parse(req.body);
+    const assigned = await repository.assignUnit(churchId, Number(req.params.id), unitId);
+    if (!assigned) throw conflict("Solicitud o unidad no disponible para asignación");
+    res.json(assigned);
+  })
 );
 router.post(
   "/churches/:churchId/space-requests",

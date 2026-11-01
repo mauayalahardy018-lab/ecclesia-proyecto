@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import pg from "pg";
 import bcrypt from "bcryptjs";
 import { defaultCriteria } from "../src/domain/patrimony.js";
+import { realChurches } from "../data/real-churches.js";
 
 if (!process.env.DATABASE_URL) throw new Error("Falta DATABASE_URL");
 if (process.env.NODE_ENV === "production") throw new Error("Los datos ficticios de curso no se cargan en producción");
@@ -27,8 +28,40 @@ try {
       [locality.code, locality.municipalityCode, locality.name]
     );
   if (Number((await query("SELECT count(*) AS total FROM churches")).rows[0].total) > 0) {
+    let replaced = 0;
+    for (let index = 0; index < realChurches.length; index++) {
+      const church = realChurches[index];
+      const demoCapacity = 200 + (index % 9) * 50;
+      const locality = geo.localities.find((item) => item.code === church.localityCode);
+      const municipality = geo.municipalities.find((item) => item.code === locality.municipalityCode);
+      const result = await query(
+        `UPDATE churches SET name=$2,type=$3,state_code=$4,municipality_code=$5,locality_code=$6,
+        address=$7,capacity=COALESCE(capacity,$8),
+        capacity_is_demo=CASE WHEN capacity IS NULL THEN true ELSE capacity_is_demo END,
+        construction_year=COALESCE(construction_year,$9),phone=COALESCE(phone,$10),email=COALESCE(email,$11),
+        maps_query=$12,source_url=$13,updated_at=now()
+        WHERE (name=$1 OR name=$14 OR name=$2) AND (source_url IS NOT NULL OR name=$1)`,
+        [
+          `Iglesia de muestra ${String(index + 1).padStart(2, "0")}`,
+          church.name,
+          church.type,
+          municipality.stateCode,
+          municipality.code,
+          locality.code,
+          church.address,
+          demoCapacity,
+          church.constructionYear ?? null,
+          church.phone ?? null,
+          church.email ?? null,
+          church.mapsQuery,
+          church.sourceUrl,
+          church.legacyName ?? church.name
+        ]
+      );
+      replaced += result.rowCount;
+    }
     await query("COMMIT");
-    console.log("Catálogo actualizado; datos ficticios ya existentes conservados");
+    console.log(`Catálogo académico sincronizado; ${replaced} templos con fuente y capacidad de demostración`);
     process.exit(0);
   }
 
@@ -52,26 +85,29 @@ try {
     users.push(Number(result.rows[0].id));
   }
 
-  const types = ["catedral", "basilica", "parroquia", "templo", "capilla", "santuario"];
   const churchIds = [];
-  for (let index = 0; index < 40; index++) {
-    const locality = geo.localities[index % geo.localities.length];
+  for (let index = 0; index < realChurches.length; index++) {
+    const church = realChurches[index];
+    const locality = geo.localities.find((item) => item.code === church.localityCode);
     const municipality = geo.municipalities.find((item) => item.code === locality.municipalityCode);
     const result = await query(
-      `INSERT INTO churches(name,type,state_code,municipality_code,locality_code,address,capacity,construction_year,phone,email,timezone)
-      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+      `INSERT INTO churches(name,type,state_code,municipality_code,locality_code,address,capacity,capacity_is_demo,
+      construction_year,phone,email,timezone,maps_query,source_url)
+      VALUES($1,$2,$3,$4,$5,$6,$7,true,$8,$9,$10,$11,$12,$13) RETURNING id`,
       [
-        `Iglesia de muestra ${String(index + 1).padStart(2, "0")}`,
-        types[index % types.length],
+        church.name,
+        church.type,
         municipality.stateCode,
         municipality.code,
         locality.code,
-        `Dirección ficticia ${index + 1}, ${locality.name}`,
-        100 + index * 10,
-        1700 + index * 5,
-        "000-000-0000",
-        `muestra${index + 1}@example.test`,
-        "America/Mexico_City"
+        church.address,
+        200 + (index % 9) * 50,
+        church.constructionYear ?? null,
+        church.phone ?? null,
+        church.email ?? null,
+        "America/Mexico_City",
+        church.mapsQuery,
+        church.sourceUrl
       ]
     );
     const churchId = Number(result.rows[0].id);
@@ -186,7 +222,7 @@ try {
   }
   await query("COMMIT");
   console.log(
-    `Seeds: ${geo.states.length} entidades, ${geo.municipalities.length} municipios, 40 iglesias, 120 objetos, 15 sacerdotes y 12 solicitudes ficticias`
+    `Seeds: ${geo.states.length} entidades, ${geo.municipalities.length} municipios, ${realChurches.length} iglesias reales con datos operativos simulados, 120 objetos ficticios, 15 sacerdotes ficticios y 12 solicitudes ficticias`
   );
 } catch (error) {
   await query("ROLLBACK");

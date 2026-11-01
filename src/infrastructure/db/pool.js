@@ -1,6 +1,8 @@
 import pg from "pg";
 
-export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const max = Number(process.env.DB_POOL_MAX || 10);
+if (!Number.isInteger(max) || max < 1 || max > 100) throw new Error("DB_POOL_MAX debe estar entre 1 y 100");
+export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max });
 export const query = (text, params = []) => pool.query(text, params);
 
 export async function transaction(work) {

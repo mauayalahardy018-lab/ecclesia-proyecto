@@ -59,7 +59,9 @@ export async function createChurch(input) {
 
 export async function updateChurch(id, input) {
   const result = await query(
-    `UPDATE churches SET name=$2,type=$3,address=$4,capacity=$5,construction_year=$6,phone=$7,email=$8,latitude=$9,longitude=$10,timezone=$11,updated_at=now()
+    `UPDATE churches SET name=$2,type=$3,address=$4,capacity=$5,
+    capacity_is_demo=CASE WHEN capacity IS DISTINCT FROM $5 THEN false ELSE capacity_is_demo END,
+    construction_year=$6,phone=$7,email=$8,latitude=$9,longitude=$10,timezone=$11,updated_at=now()
     WHERE id=$1 RETURNING *`,
     [
       id,

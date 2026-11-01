@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { churchIndex, representativeYear } from "../src/domain/patrimony.js";
-import { priestHasConflict, priestHasConflictAcrossZones, weeklySchedulesOverlap } from "../src/domain/schedules.js";
+import {
+  generateWeek,
+  priestHasConflict,
+  priestHasConflictAcrossZones,
+  weeklySchedulesOverlap
+} from "../src/domain/schedules.js";
 import { parseCents, centsToPesos } from "../src/domain/money.js";
 import { canTransition, quoteExpiry, transitionRequest } from "../src/domain/spaces.js";
 
@@ -50,6 +55,22 @@ describe("agendas", () => {
     const existing = { priestId: 1, weekday: 0, localTime: "08:00", timezone: "America/Tijuana" };
     expect(priestHasConflictAcrossZones(proposed, [existing], "2026-10-30")).toBe(true);
     expect(priestHasConflictAcrossZones(proposed, [{ ...existing, localTime: "06:00" }], "2026-10-30")).toBe(false);
+  });
+  it("genera la agenda desde el domingo local y ordena los horarios", () => {
+    const week = generateWeek(
+      [
+        { id: 2, weekday: 2, local_time: "18:30:00", duration_minutes: 60 },
+        { id: 1, weekday: 0, local_time: "07:00:00", duration_minutes: 45 }
+      ],
+      "2026-10-30",
+      "America/Mexico_City"
+    );
+    expect(week.map(({ id, localDate }) => [id, localDate])).toEqual([
+      [1, "2026-10-25"],
+      [2, "2026-10-27"]
+    ]);
+    expect(week[0].endsAt).toBe("2026-10-25T07:45:00.000-06:00");
+    expect(() => generateWeek([], "fecha-inválida", "America/Mexico_City")).toThrow();
   });
 });
 

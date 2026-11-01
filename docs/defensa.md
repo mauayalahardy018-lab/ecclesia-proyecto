@@ -1,5 +1,7 @@
 # Defensa del proyecto Ecclesia
 
+El guion oral desarrollado, con texto sugerido por segmento, demostración, preguntas y límites, está en `docs/defensa_oral_completa.md`. Este archivo conserva el esquema de apoyo y la lista de evidencia.
+
 ## Alcance y honestidad de la entrega
 
 Esta guía prepara una exposición de **20 minutos** del sistema nacional descrito en el caso. Es un guion de defensa, no un registro de una exposición ya realizada. Las casillas de evidencia se llenan solo después de ejecutar la demostración en un ambiente limpio. Las respuestas P-01 a P-10 de `requerimientos.md` siguen pendientes del docente o cliente; no se atribuyen decisiones a ellos sin una respuesta fechada.
@@ -27,13 +29,13 @@ El visitante puede encontrar iglesias y consultar su actividad sin cuenta. El pe
 
 1. Mostrar una base limpia: `docker compose up -d db`, `npm ci`, `npm run db:migrate`, `npm run db:seed`.
 2. Verificar los conteos mediante SQL y guardar salida: 32 entidades, todos los municipios del corte INEGI, 40 iglesias, 120 objetos, 15 sacerdotes y 12 solicitudes.
-3. Abrir `http://localhost:4300/`; filtrar por estado, municipio, tipo y nombre; abrir una ficha.
+3. Abrir `http://localhost:4300/`; filtrar por estado, municipio, tipo y nombre; abrir una ficha y confirmar que ranking, patrimonio, oferta y agenda responden sin 500.
 4. Consultar `GET /api/v1/rankings` y explicar en una prueba por qué el ejemplo del caso suma 35.5.
 5. Iniciar sesión con una cuenta semilla de Coordinación, crear una iglesia de prueba y ver que un usuario de otra iglesia recibe 403.
 6. Crear un horario que choque con otro del mismo sacerdote y mostrar 409. Registrar una misa celebrada y una sustitución con motivo.
 7. Como tesorero, registrar un diezmo; repetir la misma celebración para mostrar 409; corregirlo y consultar el informe. Probar 403 con un usuario sin acceso.
 8. Como visitante, solicitar un espacio; conservar folio y clave; consultar la respuesta privada, aceptar/rechazar y demostrar una transición inválida.
-9. Ejecutar `npm run check` y mostrar el reporte de cobertura. La prueba de integración con PostgreSQL debe quedar verde antes de afirmar que el flujo completo funciona.
+9. Ejecutar `npm run check`, `npm run test:integration` y mostrar el reporte de cobertura. La prueba de integración con PostgreSQL de servidor debe quedar verde antes de afirmar que el flujo completo funciona en ese entorno.
 
 ## Cinco decisiones que debo poder explicar sin ayuda
 
@@ -51,18 +53,20 @@ El visitante puede encontrar iglesias y consultar su actividad sin cuenta. El pe
 
 **¿Qué pasa si se corrige un diezmo?** El valor actual se actualiza en transacción y `tithe_changes` conserva anterior, nuevo, autor, razón y hora. El registro original no se borra.
 
-**¿Cómo se evita doble reservar a un sacerdote?** La regla compara los intervalos semanales en zona horaria local y las celebraciones reales. Se añadió un bloqueo transaccional por sacerdote. Falta demostrar dos solicitudes concurrentes en PostgreSQL de servidor: el socket de la base embebida reinició una conexión durante esa prueba, así que la defensa no debe afirmar que la concurrencia está validada.
+**¿Cómo se evita doble reservar a un sacerdote?** La regla compara los intervalos semanales en zona horaria local y las celebraciones reales. Se añadió un bloqueo transaccional por sacerdote. Dos solicitudes concurrentes en iglesias diferentes se probaron en PostgreSQL 17 de servidor: una se creó y la otra devolvió conflicto.
 
-**¿Qué información viene de INEGI?** Claves y nombres de estados/municipios, más las localidades usadas en la semilla. Las iglesias, personas, precios y montos de la demostración son ficticios.
+**¿Qué información viene de INEGI?** Claves y nombres de estados/municipios, más las localidades usadas en la semilla. Los 40 templos tienen nombres y ubicaciones de fuentes públicas y un enlace a Google Maps; personas, patrimonio, horarios, precios y montos de la demostración son simulados.
 
 **¿Qué hizo Codex y qué revisó la persona?** La bitácora enumera instrucciones, resultados, fallos detectados y correcciones. La persona debe poder reproducir pruebas y explicar las cinco decisiones anteriores; no basta con presentar código generado.
 
 ## Evidencia por completar
 
 - [ ] Respuestas fechadas del docente/cliente a las preguntas abiertas.
-- [ ] Migración y seed ejecutados sobre PostgreSQL real, con conteos guardados.
-- [ ] Pruebas HTTP/BD de autorización, ranking, traslape, diezmo y solicitud.
-- [ ] Cobertura de dominio/servicios medida con todos los módulos incluidos, mínimo 70 %.
+- [x] Migración y seed ejecutados sobre PostgreSQL 17 de servidor, con conteos registrados en la bitácora.
+- [x] Pruebas HTTP/BD de autorización, ranking, traslape, diezmo, solicitud y concurrencia; 15 pruebas de integración aprobadas en PostgreSQL 17.
+- [x] Cobertura de dominio y servicios medida en PostgreSQL 17: 86.41 % de sentencias, 78.98 % de ramas, 94.2 % de funciones y 91.52 % de líneas; 39 pruebas aprobadas.
 - [ ] Repositorios remotos y commits con autor real y tráiler de asistencia.
-- [ ] Instalación del arnés en segundo repositorio y video de máximo cinco minutos.
+- [x] Instalación local del arnés en segundo repositorio y controles verdes.
+- [x] Video MP4 subtitulado de la ejecución local, 1:36, con comandos y salida registrada.
+- [ ] Video real de máximo cinco minutos grabado por el alumno.
 - [ ] Ensayo de 20 minutos y defensa oral realizada por el alumno.

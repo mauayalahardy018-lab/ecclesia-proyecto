@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { priestHasConflictAcrossZones } from "../../domain/schedules.js";
+import { generateWeek, priestHasConflictAcrossZones } from "../../domain/schedules.js";
 import { badRequest, conflict, notFound } from "../../lib/errors.js";
 import * as repository from "./repository.js";
 
@@ -15,6 +15,16 @@ export async function addSchedule(churchId, input) {
       throw conflict("El sacerdote ya tiene una misa en ese horario");
     return repository.createSchedule(churchId, input, client);
   });
+}
+
+export async function weeklyAgenda(churchId, fromDate) {
+  const timezone = await repository.churchTimezone(churchId);
+  if (!timezone) throw notFound();
+  return {
+    timezone,
+    from: fromDate,
+    items: generateWeek(await repository.churchSchedules(churchId), fromDate, timezone)
+  };
 }
 
 export async function celebrate(churchId, input, actorId) {

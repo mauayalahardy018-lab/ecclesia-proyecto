@@ -95,6 +95,18 @@ router.post(
     res.status(201).json(await repository.addObject(id, objectInput.parse(req.body)));
   })
 );
+router.put(
+  "/churches/:churchId/heritage/:id",
+  authenticate,
+  requireRole("coordinacion", "administrador_iglesia"),
+  route(async (req, res) => {
+    const churchId = Number(req.params.churchId);
+    await requireChurch(req, churchId);
+    const object = await repository.updateObject(churchId, Number(req.params.id), objectInput.parse(req.body));
+    if (!object) throw notFound();
+    res.json(object);
+  })
+);
 router.patch(
   "/churches/:churchId/heritage/:id/status",
   authenticate,

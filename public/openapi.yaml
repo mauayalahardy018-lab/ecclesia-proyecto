@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Ecclesia API
   version: 0.1.0
-  description: API académica del Sistema Nacional de Gestión de Iglesias. Los datos semilla son ficticios.
+  description: API académica del Sistema Nacional de Gestión de Iglesias. Los templos del directorio son reales; sus capacidades marcadas y datos operativos semilla son ficticios.
 servers:
   - url: http://localhost:4300/api/v1
 tags:
@@ -68,9 +68,35 @@ components:
         locality_code: { type: string }
         address: { type: string }
         capacity: { type: [integer, 'null'] }
+        capacity_is_demo: { type: boolean, description: La capacidad pertenece a la demostración académica }
         construction_year: { type: [integer, 'null'] }
+        phone: { type: [string, 'null'] }
+        email: { type: [string, 'null'] }
         latitude: { type: [number, 'null'] }
         longitude: { type: [number, 'null'] }
+        maps_query: { type: [string, 'null'], description: Búsqueda de ubicación en Google Maps }
+        source_url: { type: [string, 'null'], format: uri, description: Fuente del nombre y municipio del templo }
+    TitheReport:
+      type: object
+      properties:
+        churchId: { type: integer }
+        period: { type: object, properties: { from: { type: string, format: date }, to: { type: string, format: date } } }
+        count: { type: integer }
+        totalPesos: { type: string, description: Importe decimal exacto en pesos }
+        averagePesos: { type: string, description: Promedio redondeado al centavo }
+        lowest: { type: [object, 'null'] }
+        highest: { type: [object, 'null'] }
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              key: { type: string }
+              count: { type: integer }
+              totalPesos: { type: string }
+              averagePesos: { type: string }
+              lowest: { type: object }
+              highest: { type: object }
     ChurchInput:
       type: object
       required: [name, type, stateCode, municipalityCode, localityCode, address]
@@ -346,7 +372,7 @@ paths:
       summary: Resumen privado por periodo y agrupación
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/churchId' }, { name: from, in: query, schema: { type: string, format: date } }, { name: to, in: query, schema: { type: string, format: date } }, { name: groupBy, in: query, schema: { type: string } }]
-      responses: { '200': { description: Informe } }
+      responses: { '200': { description: Informe, content: { application/json: { schema: { $ref: '#/components/schemas/TitheReport' } } } } }
   /churches/{churchId}/space-types:
     get:
       tags: [Espacios]
@@ -391,9 +417,128 @@ paths:
   /me/churches:
     get: { tags: [Identidad], summary: Iglesias asignadas al usuario, security: [{ bearerAuth: [] }], responses: { '200': { description: Iglesias } } }
   /users:
+    get:
+      tags: [Identidad]
+      summary: Lista usuarios sin hashes de contraseña
+      security: [{ bearerAuth: [] }]
+      responses: { '200': { description: Usuarios de Coordinación } }
     post:
       tags: [Identidad]
       summary: Registra usuario y asignaciones
       security: [{ bearerAuth: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UserInput' } } } }
       responses: { '201': { description: Usuario creado } }
+  /churches/{id}/manage:
+    get:
+      tags: [Iglesias]
+      summary: Consulta completa de iglesia asignada, incluso si está cerrada
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Datos de gestión } }
+  /churches/{churchId}/heritage/{id}:
+    put:
+      tags: [Patrimonio]
+      summary: Edita un objeto conservando su identidad e historial de estado
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/HeritageInput' } } } }
+      responses: { '200': { description: Objeto editado } }
+  /talks:
+    get:
+      tags: [Oferta]
+      summary: Busca pláticas activas en un municipio
+      parameters: [{ name: municipality, in: query, required: true, schema: { type: string, pattern: '^\d{5}$' } }, { name: type, in: query, schema: { type: string } }, { $ref: '#/components/parameters/page' }, { $ref: '#/components/parameters/limit' }]
+      responses: { '200': { description: Pláticas paginadas } }
+  /churches/{churchId}/services/manage:
+    get:
+      tags: [Oferta]
+      summary: Todos los servicios de una iglesia asignada
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }]
+      responses: { '200': { description: Servicios activos e inactivos } }
+  /churches/{churchId}/talks/manage:
+    get:
+      tags: [Oferta]
+      summary: Todas las pláticas de una iglesia asignada
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }]
+      responses: { '200': { description: Pláticas activas e inactivas } }
+  /churches/{churchId}/services/{id}:
+    put:
+      tags: [Oferta]
+      summary: Edita servicio
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceInput' } } } }
+      responses: { '200': { description: Servicio editado } }
+  /churches/{churchId}/services/{id}/active:
+    patch:
+      tags: [Oferta]
+      summary: Activa o desactiva servicio sin borrar historial
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Servicio actualizado } }
+  /churches/{churchId}/talks/{id}:
+    put:
+      tags: [Oferta]
+      summary: Edita plática
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/TalkInput' } } } }
+      responses: { '200': { description: Plática editada } }
+  /churches/{churchId}/talks/{id}/active:
+    patch:
+      tags: [Oferta]
+      summary: Activa o desactiva plática sin borrar historial
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Plática actualizada } }
+  /churches/{churchId}/masses/week:
+    get:
+      tags: [Misas]
+      summary: Genera la agenda semanal desde horarios recurrentes
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { name: from, in: query, required: true, schema: { type: string, format: date } }]
+      responses: { '200': { description: Agenda semanal } }
+  /churches/{churchId}/tithes:
+    get:
+      tags: [Diezmos]
+      summary: Lista privada de diezmos para corrección
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }]
+      responses: { '200': { description: Diezmos de la iglesia } }
+  /tithes/comparison:
+    get:
+      tags: [Diezmos]
+      summary: Comparación nacional restringida a Coordinación
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: from, in: query, required: true, schema: { type: string, format: date } }, { name: to, in: query, required: true, schema: { type: string, format: date } }, { name: state, in: query, schema: { type: string } }, { name: municipality, in: query, schema: { type: string } }]
+      responses: { '200': { description: Totales por iglesia } }
+  /churches/{churchId}/space-units:
+    parameters: [{ $ref: '#/components/parameters/churchId' }]
+    get: { tags: [Espacios], summary: Inventario privado de espacios, security: [{ bearerAuth: [] }], responses: { '200': { description: Unidades } } }
+    post:
+      tags: [Espacios]
+      summary: Registra unidad física de espacio
+      security: [{ bearerAuth: [] }]
+      responses: { '201': { description: Unidad creada } }
+  /churches/{churchId}/space-requests/{id}/assign:
+    post:
+      tags: [Espacios]
+      summary: Asigna unidad disponible a solicitud aceptada
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/churchId' }, { $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Unidad asignada }, '409': { description: No disponible } }
+  /users/{id}:
+    put:
+      tags: [Identidad]
+      summary: Cambia rol, estado y asignaciones de usuario
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Usuario actualizado } }
+  /users/{id}/password:
+    put:
+      tags: [Identidad]
+      summary: Coordinación restablece contraseña de usuario
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/id' }]
+      responses: { '200': { description: Contraseña cambiada } }

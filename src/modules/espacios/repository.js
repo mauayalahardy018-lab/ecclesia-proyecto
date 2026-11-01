@@ -25,6 +25,56 @@ export const forChurch = async (churchId) =>
     )
   ).rows;
 
+export async function expireQuotes() {
+  const result = await query(`WITH expired AS (
+    UPDATE space_requests SET status='vencida',updated_at=now()
+    WHERE status='cotizada' AND quote_expires_at<=now() RETURNING id
+  )
+  INSERT INTO space_request_changes(request_id,old_status,new_status,note)
+  SELECT id,'cotizada','vencida','Cotización vencida automáticamente' FROM expired RETURNING request_id`);
+  return result.rowCount;
+}
+
+export const unitsForChurch = async (churchId) =>
+  (
+    await query(
+      `SELECT su.id,su.code,su.status,su.assigned_request_id,st.type FROM space_units su
+    JOIN space_types st ON st.id=su.space_type_id WHERE su.church_id=$1 ORDER BY su.code`,
+      [churchId]
+    )
+  ).rows;
+
+export async function createUnit(churchId, typeId, code) {
+  return (
+    (
+      await query(
+        `INSERT INTO space_units(church_id,space_type_id,code)
+    SELECT $1,st.id,$3 FROM space_types st WHERE st.id=$2 AND st.church_id=$1 AND st.active=true
+    RETURNING *`,
+        [churchId, typeId, code]
+      )
+    ).rows[0] || null
+  );
+}
+
+export async function assignUnit(churchId, requestId, unitId) {
+  return transaction(async (client) => {
+    const request = (
+      await client.query("SELECT id,space_type_id,status FROM space_requests WHERE church_id=$1 AND id=$2 FOR UPDATE", [
+        churchId,
+        requestId
+      ])
+    ).rows[0];
+    if (!request || request.status !== "aceptada") return null;
+    const result = await client.query(
+      `UPDATE space_units SET status='asignada',assigned_request_id=$3
+      WHERE id=$1 AND church_id=$2 AND space_type_id=$4 AND status='disponible' RETURNING *`,
+      [unitId, churchId, requestId, request.space_type_id]
+    );
+    return result.rows[0] || null;
+  });
+}
+
 export async function create(churchId, input) {
   return transaction(async (client) => {
     const record = (
