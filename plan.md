@@ -74,7 +74,7 @@ La columna de estado de cada requisito vive en `docs/trazabilidad.md`: `PENDIENT
 
 1. Responder y validar con el docente/cliente P-01–P-10; ajustar reglas y criterios afectados.
 2. Confirmar con el cliente las reglas aún abiertas de agenda, permisos, índice, diezmos y retención. La matriz de permisos implementada ya tiene pruebas, pero no sustituye esa confirmación.
-3. Publicar tres repositorios remotos separados: producto, arnés y prueba de portabilidad. El MP4 de 1:36 ya documenta la ejecución local del hook.
+3. Publicado el 1 de noviembre: tres repositorios remotos separados de producto, arnés y prueba de portabilidad. El MP4 de 1:36 documenta la ejecución local del hook; ver `docs/repositorios-remotos.md`.
 4. Realizar la defensa oral por el alumno. La preparación escrita y el video son evidencia, no constancia de una exposición realizada.
 
 ### Cierre técnico del 1 de noviembre de 2026
@@ -85,3 +85,4 @@ La columna de estado de cada requisito vive en `docs/trazabilidad.md`: `PENDIENT
 - RF-27: pruebas de acceso anónimo, coordinación y personal asignado/no asignado; límites por rol e iglesia comprobados.
 - Migración y seed limpios en PostgreSQL 17; 15 pruebas de integración y 39 pruebas de cobertura completa verdes. Cobertura de dominio y servicios: 86.41 % de sentencias y 78.98 % de ramas.
 - Arnés 0.1.4 instalado en el repositorio independiente de tareas. El hook pasó lint, formato, dependencias y prueba; video local de portabilidad generado.
+- Repositorios públicos de producto, arnés y portabilidad publicados en GitHub. Demostración académica pública publicada en Sites con el panel de gestión en `#gestion`; sus cambios se guardan en cada navegador.

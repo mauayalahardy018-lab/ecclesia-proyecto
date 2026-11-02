@@ -65,7 +65,7 @@ El visitante puede encontrar iglesias y consultar su actividad sin cuenta. El pe
 - [x] Migración y seed ejecutados sobre PostgreSQL 17 de servidor, con conteos registrados en la bitácora.
 - [x] Pruebas HTTP/BD de autorización, ranking, traslape, diezmo, solicitud y concurrencia; 15 pruebas de integración aprobadas en PostgreSQL 17.
 - [x] Cobertura de dominio y servicios medida en PostgreSQL 17: 86.41 % de sentencias, 78.98 % de ramas, 94.2 % de funciones y 91.52 % de líneas; 39 pruebas aprobadas.
-- [ ] Repositorios remotos y commits con autor real y tráiler de asistencia.
+- [x] Tres repositorios públicos en GitHub, con commits del usuario de GitHub y tráiler de asistencia; enlaces en `docs/repositorios-remotos.md`.
 - [x] Instalación local del arnés en segundo repositorio y controles verdes.
 - [x] Video MP4 subtitulado de la ejecución local, 1:36, con comandos y salida registrada.
 - [ ] Video real de máximo cinco minutos grabado por el alumno.

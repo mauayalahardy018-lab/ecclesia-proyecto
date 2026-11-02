@@ -2,7 +2,7 @@
 
 Proyecto individual para el caso **Coordinación Nacional de Templos**. Stack: Express sobre Node.js, PostgreSQL, Zod, Vitest/Supertest. Herramienta de IA principal declarada desde esta entrega: **Codex**. El autor revisa las salidas; las decisiones y errores reales se registran en `docs/bitacora-ia.md`.
 
-El antiguo portal de una iglesia y el Site de demostración son referencias visuales, no constituyen la API ni la base de datos de este proyecto.
+El antiguo portal de una iglesia sirvió de referencia visual. La [demostración pública en Sites](https://ecclesia-demo-nacional-mexico.mauayalahardy018.chatgpt.site) muestra el directorio y el [panel integrado](https://ecclesia-demo-nacional-mexico.mauayalahardy018.chatgpt.site/#gestion) en un solo sitio. Sus cambios se guardan en cada navegador; la API y la base de datos de este proyecto son la implementación compartible.
 
 ## Arranque de desarrollo
 
@@ -21,7 +21,7 @@ La base embebida usa PostgreSQL en WASM para desarrollo local. Los datos persist
 
 ## Usuarios de demostración local
 
-Estos usuarios son ficticios y se crean solo con `npm run db:seed` fuera de producción. El acceso del personal está en `http://localhost:4300/gestion.html`.
+Estos usuarios son ficticios y se crean solo con `npm run db:seed` fuera de producción. El acceso del personal se abre desde el menú de la aplicación en `http://localhost:4300/#gestion`.
 
 | Rol | Correo | Contraseña de demostración |
 |---|---|---|
@@ -37,7 +37,8 @@ Estos usuarios son ficticios y se crean solo con `npm run db:seed` fuera de prod
 - `docs/ARCHITECTURE.md` y `docs/adr/`: decisiones técnicas.
 - `openapi.yaml`: contrato HTTP.
 - `docs/bitacora-ia.md`: uso honesto de Codex.
-- `docs/defensa.md`: guion de 20 minutos, demostración y evidencia pendiente.
+- `docs/defensa.md` y `docs/defensa_oral_completa.md`: esquema y guion desarrollado de 20 minutos.
+- `docs/repositorios-remotos.md`: tres repositorios públicos y enlace de Sites.
 - `docs/fuentes-iglesias.md`: fuentes y alcance de los 40 templos reales.
 - `docs/operacion.md`: configuración, arranque, respaldo y restauración en PostgreSQL de servidor.
 
